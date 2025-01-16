@@ -1,14 +1,13 @@
 import './style.css';
 import 'leaflet/dist/leaflet.css';
-import { setupCounter } from './counter.ts';
 
 import { CanvasMap } from './CanvasMap';
 // import { RandomCanvasMap } from './RandomCanvasMap.ts';
 
 const map = new CanvasMap('map');
 // map.addRandomPoints(10000);
-// map.startInterval();
-map.startReadingGrains();
+map.startInterval();
+// map.startReadingGrains();
 
 
 // document.addEventListener('DOMContentLoaded', () => {
