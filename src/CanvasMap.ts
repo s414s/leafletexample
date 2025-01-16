@@ -17,225 +17,45 @@ type MapLayer = {
 };
 
 const aragonLayersToCreate: MapLayer[] = [
-    {
-        name: 'Ortofoto - 1956',
-        leafletName: '1956_cecaf',
-        varName: 'aragonBase1956',
-        year: 1956,
-    },
-    {
-        name: 'Ortofoto - 1997',
-        leafletName: '1997_oleicola',
-        varName: 'aragonBase1997',
-        year: 1997,
-    },
-    {
-        name: 'Ortofoto - 1999',
-        leafletName: '1999_DGA',
-        varName: 'aragonBase1999',
-        year: 1999,
-    },
-    {
-        name: 'Ortofoto - 2003',
-        leafletName: '2003_fega',
-        varName: 'aragonBase2003',
-        year: 2003,
-    },
-    {
-        name: 'Ortofoto - 2006',
-        leafletName: '2006_pnoa',
-        varName: 'aragonBase2006',
-        year: 2006,
-    },
-    {
-        name: 'Ortofoto - 2009',
-        leafletName: '2009_pnoa',
-        varName: 'aragonBase2009',
-        year: 2009,
-    },
-    {
-        name: 'Ortofoto - 2012',
-        leafletName: '2012_pnoa',
-        varName: 'aragonBase2012',
-        year: 2012,
-    },
-    {
-        name: 'Ortofoto - 2015',
-        leafletName: '2015_pnoa',
-        varName: 'aragonBase2015',
-        year: 2015,
-    },
-    {
-        name: 'Ortofoto - 2018',
-        leafletName: '2018_pnoa',
-        varName: 'aragonBase2018',
-        year: 2018,
-    },
-    {
-        name: 'Ortofoto - 2021',
-        leafletName: '2021_pnoa',
-        varName: 'aragonBase2021',
-        year: 2021,
-    },
+    { name: 'Ortofoto - 1956', leafletName: '1956_cecaf', varName: 'aragonBase1956', year: 1956 },
+    { name: 'Ortofoto - 1997', leafletName: '1997_oleicola', varName: 'aragonBase1997', year: 1997 },
+    { name: 'Ortofoto - 1999', leafletName: '1999_DGA', varName: 'aragonBase1999', year: 1999 },
+    { name: 'Ortofoto - 2003', leafletName: '2003_fega', varName: 'aragonBase2003', year: 2003 },
+    { name: 'Ortofoto - 2006', leafletName: '2006_pnoa', varName: 'aragonBase2006', year: 2006 },
+    { name: 'Ortofoto - 2009', leafletName: '2009_pnoa', varName: 'aragonBase2009', year: 2009 },
+    { name: 'Ortofoto - 2012', leafletName: '2012_pnoa', varName: 'aragonBase2012', year: 2012 },
+    { name: 'Ortofoto - 2015', leafletName: '2015_pnoa', varName: 'aragonBase2015', year: 2015 },
+    { name: 'Ortofoto - 2018', leafletName: '2018_pnoa', varName: 'aragonBase2018', year: 2018 },
+    { name: 'Ortofoto - 2021', leafletName: '2021_pnoa', varName: 'aragonBase2021', year: 2021 },
 ];
 
 const catLayers: MapLayer[] = [
-    {
-        name: 'Ortofoto - 1945',
-        leafletName: 'ortofoto_blanc_i_negre_1945',
-        varName: 'catalunyaBase1945',
-        year: 1945,
-    },
-    {
-        name: 'Ortofoto - 1956',
-        leafletName: 'ortofoto_blanc_i_negre_1956',
-        varName: 'catalunyaBase1956',
-        year: 1956,
-    },
-    {
-        name: 'Ortofoto - 1970-1977',
-        leafletName: 'ortofoto_blanc_i_negre_1970-1977',
-        varName: 'catalunyaBase1970_77',
-        year: 1970,
-    },
-    {
-        name: 'Ortofoto - 1983-1992',
-        leafletName: 'ortofoto_blanc_i_negre_1983-1992',
-        varName: 'catalunyaBase1983_92',
-        year: 1983,
-    },
-    {
-        name: 'Ortofoto - 1993',
-        leafletName: 'ortofoto_color_1993',
-        varName: 'catalunyaBase1993',
-        year: 1993,
-    },
-    {
-        name: 'Ortofoto - 1994-1997',
-        leafletName: 'ortofoto_blanc_i_negre_1994-1997',
-        varName: 'catalunyaBase1994_97',
-        year: 1994,
-    },
-    {
-        name: 'Ortofoto - 1998',
-        leafletName: 'ortofoto_blanc_i_negre_1998',
-        varName: 'catalunyaBase1998',
-        year: 1998,
-    },
-    {
-        name: 'Ortofoto - 2000-2003',
-        leafletName: 'ortofoto_color_2000-2003',
-        varName: 'catalunyaBase2000_03',
-        year: 2000,
-    },
-    {
-        name: 'Ortofoto - 2004-2005',
-        leafletName: 'ortofoto_color_2004-2005',
-        varName: 'catalunyaBase2004_05',
-        year: 2004,
-    },
-    {
-        name: 'Ortofoto - 2006-2007',
-        leafletName: 'ortofoto_color_2006-2007',
-        varName: 'catalunyaBase2006_07',
-        year: 2006,
-    },
-    {
-        name: 'Ortofoto - 2008',
-        leafletName: 'ortofoto_color_2008',
-        varName: 'catalunyaBase2008',
-        year: 2008,
-    },
-    {
-        name: 'Ortofoto - 2009',
-        leafletName: 'ortofoto_color_2009',
-        varName: 'catalunyaBase2009',
-        year: 2009,
-    },
-    {
-        name: 'Ortofoto - 2010',
-        leafletName: 'ortofoto_color_2010',
-        varName: 'catalunyaBase2010',
-        year: 2010,
-    },
-    {
-        name: 'Ortofoto - 2011',
-        leafletName: 'ortofoto_color_2011',
-        varName: 'catalunyaBase2011',
-        year: 2011,
-    },
-    {
-        name: 'Ortofoto - 2012',
-        leafletName: 'ortofoto_color_2012',
-        varName: 'catalunyaBase2012',
-        year: 2012,
-    },
-    {
-        name: 'Ortofoto - 2013',
-        leafletName: 'ortofoto_color_2013',
-        varName: 'catalunyaBase2013',
-        year: 2013,
-    },
-    {
-        name: 'Ortofoto - 2014',
-        leafletName: 'ortofoto_color_2014',
-        varName: 'catalunyaBase2014',
-        year: 2014,
-    },
-    {
-        name: 'Ortofoto - 2015',
-        leafletName: 'ortofoto_color_2015',
-        varName: 'catalunyaBase2015',
-        year: 2015,
-    },
-    {
-        name: 'Ortofoto - 2016',
-        leafletName: 'ortofoto_color_2016',
-        varName: 'catalunyaBase2016',
-        year: 2016,
-    },
-    {
-        name: 'Ortofoto - 2017',
-        leafletName: 'ortofoto_color_2017',
-        varName: 'catalunyaBase2017',
-        year: 2017,
-    },
-    {
-        name: 'Ortofoto - 2018',
-        leafletName: 'ortofoto_color_2018',
-        varName: 'catalunyaBase2018',
-        year: 2018,
-    },
-    {
-        name: 'Ortofoto - 2019',
-        leafletName: 'ortofoto_color_2019',
-        varName: 'catalunyaBase2019',
-        year: 2019,
-    },
-    {
-        name: 'Ortofoto - 2020',
-        leafletName: 'ortofoto_color_2020',
-        varName: 'catalunyaBase2020',
-        year: 2020,
-    },
-    {
-        name: 'Ortofoto - 2021',
-        leafletName: 'ortofoto_color_2021',
-        varName: 'catalunyaBase2021',
-        year: 2021,
-    },
-    {
-        name: 'Ortofoto - 2022',
-        leafletName: 'ortofoto_color_2022',
-        varName: 'catalunyaBase2022',
-        year: 2022,
-    },
-    {
-        name: 'Ortofoto (MA)',
-        leafletName: 'ortofoto_color_provisional',
-        varName: 'catalunyaBaseProvisional',
-        year: 2100,
-    }
+    { name: 'Ortofoto - 1945', leafletName: 'ortofoto_blanc_i_negre_1945', varName: 'catalunyaBase1945', year: 1945 },
+    { name: 'Ortofoto - 1956', leafletName: 'ortofoto_blanc_i_negre_1956', varName: 'catalunyaBase1956', year: 1956 },
+    { name: 'Ortofoto - 1970-1977', leafletName: 'ortofoto_blanc_i_negre_1970-1977', varName: 'catalunyaBase1970_77', year: 1970 },
+    { name: 'Ortofoto - 1983-1992', leafletName: 'ortofoto_blanc_i_negre_1983-1992', varName: 'catalunyaBase1983_92', year: 1983 },
+    { name: 'Ortofoto - 1993', leafletName: 'ortofoto_color_1993', varName: 'catalunyaBase1993', year: 1993 },
+    { name: 'Ortofoto - 1994-1997', leafletName: 'ortofoto_blanc_i_negre_1994-1997', varName: 'catalunyaBase1994_97', year: 1994 },
+    { name: 'Ortofoto - 1998', leafletName: 'ortofoto_blanc_i_negre_1998', varName: 'catalunyaBase1998', year: 1998 },
+    { name: 'Ortofoto - 2000-2003', leafletName: 'ortofoto_color_2000-2003', varName: 'catalunyaBase2000_03', year: 2000 },
+    { name: 'Ortofoto - 2004-2005', leafletName: 'ortofoto_color_2004-2005', varName: 'catalunyaBase2004_05', year: 2004 },
+    { name: 'Ortofoto - 2006-2007', leafletName: 'ortofoto_color_2006-2007', varName: 'catalunyaBase2006_07', year: 2006 },
+    { name: 'Ortofoto - 2008', leafletName: 'ortofoto_color_2008', varName: 'catalunyaBase2008', year: 2008 },
+    { name: 'Ortofoto - 2009', leafletName: 'ortofoto_color_2009', varName: 'catalunyaBase2009', year: 2009 },
+    { name: 'Ortofoto - 2010', leafletName: 'ortofoto_color_2010', varName: 'catalunyaBase2010', year: 2010 },
+    { name: 'Ortofoto - 2011', leafletName: 'ortofoto_color_2011', varName: 'catalunyaBase2011', year: 2011 },
+    { name: 'Ortofoto - 2012', leafletName: 'ortofoto_color_2012', varName: 'catalunyaBase2012', year: 2012 },
+    { name: 'Ortofoto - 2013', leafletName: 'ortofoto_color_2013', varName: 'catalunyaBase2013', year: 2013 },
+    { name: 'Ortofoto - 2014', leafletName: 'ortofoto_color_2014', varName: 'catalunyaBase2014', year: 2014 },
+    { name: 'Ortofoto - 2015', leafletName: 'ortofoto_color_2015', varName: 'catalunyaBase2015', year: 2015 },
+    { name: 'Ortofoto - 2016', leafletName: 'ortofoto_color_2016', varName: 'catalunyaBase2016', year: 2016 },
+    { name: 'Ortofoto - 2017', leafletName: 'ortofoto_color_2017', varName: 'catalunyaBase2017', year: 2017 },
+    { name: 'Ortofoto - 2018', leafletName: 'ortofoto_color_2018', varName: 'catalunyaBase2018', year: 2018 },
+    { name: 'Ortofoto - 2019', leafletName: 'ortofoto_color_2019', varName: 'catalunyaBase2019', year: 2019 },
+    { name: 'Ortofoto - 2020', leafletName: 'ortofoto_color_2020', varName: 'catalunyaBase2020', year: 2020 },
+    { name: 'Ortofoto - 2021', leafletName: 'ortofoto_color_2021', varName: 'catalunyaBase2021', year: 2021 },
+    { name: 'Ortofoto - 2022', leafletName: 'ortofoto_color_2022', varName: 'catalunyaBase2022', year: 2022 },
+    { name: 'Ortofoto (MA)', leafletName: 'ortofoto_color_provisional', varName: 'catalunyaBaseProvisional', year: 2100 }
 ];
 
 export class CanvasMap {
@@ -441,12 +261,42 @@ export class CanvasMap {
             maxZoom: 23
         }).addTo(this.map);
 
+
+        // TODO - falta ajustar el nivel de detalle del zoom
+        // https://sigpac.mapa.gob.es/sdg/wmts?layer=ortofotos&style=default&tilematrixset=EPSG3857&time=&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix=16&TileCol=32617&TileRow=24403
+        // L.tileLayer(
+        //     'https://sigpac.mapa.gob.es/sdg/wmts?layer=ortofotos&style=default&tilematrixset=EPSG3857&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix={z}&TileCol={x}&TileRow={y}',
+        //     {
+        //         attribution: 'SIGPAC Ortofoto © Ministerio de Agricultura, Pesca y Alimentación de España',
+        //         // maxZoom: 20, // Adjust as per the service capabilities
+        //         // minZoom: 0, // Adjust as per your application
+        //         tileSize: 256,
+        //     }
+        // ).addTo(this.map);
+
+
+
+        // Funciona para tipos de cultivo
+        // const wmsLayer = L.tileLayer.wms('https://wms.mapama.gob.es/sig/Agricultura/MapaCultivos2000-2010/wms.aspx', {
+        //     layers: 'LC.LandCoverSurfaces',
+        //     format: 'image/png',
+        //     transparent: true,
+        //     version: '1.3.0',
+        //     attribution: 'Ministerio de Agricultura, Pesca y Alimentación (MAPA)',
+        //     maxZoom: 19,
+        //     minZoom: 3
+        // }).addTo(this.map);
+
+
+
+
+
+
         // https://gis.cayc.es/wms/cayc_general?service=WMS&request=GetMap&layers=parcel_public&styles=&format=image%2Fpng&transparent=true&version=1.1.1&width=256&height=256&srs=EPSG%3A4326&bbox=0,41.50857729743935,0.3515625,41.77131167976407
 
         // https://gis.cayc.es/wms/cayc_general?service=WMS&request=GetMap&layers=parcel_public_perimeter&styles=&format=image%2Fpng&transparent=true&version=1.1.1&width=256&height=256&srs=EPSG%3A4326&bbox=0.3515625,41.50857729743935,0.703125,41.77131167976407
 
         // https://gis.cayc.es/wms/cayc_general?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=irrigationnetwork%2Cirrigationshed&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=true&TILED=false&WIDTH=208&HEIGHT=983&CRS=EPSG%3A4326&BBOX=41.50497780464059%2C0.22659301757812503%2C42.00848901572399%2C0.36941528320312506
-
 
         // L.tileLayer.wms(
         //     'https://servicios.idee.es/wms-inspire/mdt',
@@ -573,16 +423,24 @@ export class CanvasMap {
     private renderPoints(): void {
         this.points.forEach(point => {
 
-            L.circleMarker([point.lat, point.lng], {
+            const circle = L.circleMarker([point.lat, point.lng], {
                 radius: 4,
                 fillColor: point.c === "R" ? '#ff4444' : '#44ff44',
                 color: '#000',
                 weight: 1,
                 opacity: 1,
                 fillOpacity: 0.8
-            })
-                .bindPopup(point.name)
-                .addTo(this.map);
+            }).bindPopup(point.name);
+
+            // Bind a permanent tooltip to the marker
+            // circle.bindTooltip(`${point.c === "R" ? "<50%" : ""}`, {
+            //     permanent: true,
+            //     direction: 'top', // Adjust tooltip position (e.g., 'top', 'bottom', 'left', 'right', 'center')
+            //     className: 'custom-tooltip', // Optional: Custom CSS class for styling
+            //     offset: [0, -10], // Optional: Adjust tooltip offset
+            // });
+
+            circle.addTo(this.map);
         });
 
         this.updateInfoPanel();
