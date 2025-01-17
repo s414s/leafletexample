@@ -14,6 +14,9 @@ import VectorTileLayer from 'ol/layer/VectorTile';
 import VectorTileSource from 'ol/source/VectorTile';
 import GeoJSON from 'ol/format/GeoJSON';
 import { createXYZ } from 'ol/tilegrid';
+import Style from 'ol/style/Style';
+import Stroke from 'ol/style/Stroke';
+import Fill from 'ol/style/Fill';
 
 
 interface Point {
@@ -110,15 +113,34 @@ export class OpenLayersMap {
         // Create vector tile layer for SIGPAC parcels
         const vectorTileLayer = new VectorTileLayer({
             source: new VectorTileSource({
-                format: new GeoJSON(),
+                format: new GeoJSON({
+                    // Assuming the features are in EPSG:3857
+                    dataProjection: 'EPSG:3857',
+                    featureProjection: 'EPSG:3857'
+                }),
                 url: 'https://sigpac-hubcloud.es/mvt/recinto@3857@geojson/{z}/{x}/{y}.geojson',
                 tileGrid: createXYZ({
-                    maxZoom: 19,
-                    // minZoom: 15,
+                    maxZoom: 15,
+                    minZoom: 15,  // Set minimum zoom
                 })
             }),
+            minZoom: 15,  // Set minimum zoom for source
             // Style can be added here if needed
-            style: undefined
+            style: new Style({
+                stroke: new Stroke({
+                    color: '#0000ff',
+                    width: 1
+                }),
+                // fill: new Fill({ color: 'rgba(0, 0, 255, 0.1)' })
+            }),
+            visible: true,
+            // The layer will only be visible at zoom level 15 or higher
+            // You can use this function to control visibility based on zoom
+            // prerender: function (evt) {
+            //     const map = evt.target.getMap();
+            //         this.setVisible(zoom >= 15);
+            //     }
+            // }
         });
 
 

@@ -331,22 +331,6 @@ export class CanvasMap {
             // maxNativeZoom: 15,
         };
 
-
-        // Create the vector grid layer
-        // const vectorGrid = L.vectorGrid.protobuf(
-        //     'https://sigpac.mapa.gob.es/vectorsdg/vector/parcela@3857/{z}.{x}.{y}.geojson',
-        //     {
-        //         // ...vectorTileOptions,
-        //         // Optional: Add click handling
-        //         interactive: true,
-        //         getFeatureId: (feature: any) => feature.properties.id,
-        //         // Optional: Add tooltip
-        //         // tooltip: (properties: FeatureProperties) => `ID: ${properties.id}`,
-        //         // Optional: Add click handler
-        //         // click: (event: any) => { console.log('Feature clicked:', event.layer.properties); }
-        //     }
-        // ).addTo(this.map);
-
         var pbfLayerUrl = "https://sigpac-hubcloud.es/mvt/recinto@3857@pbf/{z}/{x}/{y}.pbf";
         var opciones = {
             rendererFactory: L.canvas.tile,
