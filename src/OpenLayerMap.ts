@@ -5,7 +5,7 @@ import TileLayer from 'ol/layer/Tile';
 import { fromLonLat } from 'ol/proj';
 import XYZ from 'ol/source/XYZ';
 import TileWMS from 'ol/source/TileWMS';
-import { Point as OLPoint } from 'ol/geom';
+import { Circle, Point as OLPoint } from 'ol/geom';
 import { Feature } from 'ol';
 import { Vector as VectorLayer } from 'ol/layer';
 import { Vector as VectorSource } from 'ol/source';
@@ -28,7 +28,6 @@ interface Point {
 
 export class OpenLayersMap {
     private map: Map;
-    private points: Point[] = [];
     private randomPoints: Point[] = [];
 
     constructor(containerId: string) {
@@ -55,11 +54,16 @@ export class OpenLayersMap {
                 const feature = new Feature({
                     geometry: new OLPoint(fromLonLat([point.lng, point.lat])),
                     name: point.name,
-                    category: point.c
+                    category: point.c,
+                    fill: new Fill({
+                        color: 'rgba(255, 0, 0, 0.2)',
+                    }),
+                    color: 'rgba(255, 0, 0, 0.2)',
                 });
                 return feature;
             })
         });
+
 
         // Create vector layer for points
         const vectorLayer = new VectorLayer({
@@ -131,9 +135,12 @@ export class OpenLayersMap {
                     color: '#0000ff',
                     width: 1
                 }),
-                // fill: new Fill({ color: 'rgba(0, 0, 255, 0.1)' })
+                fill: new Fill({
+                    color: 'rgba(0, 0, 255, 0.05)',
+                })
             }),
             visible: true,
+            // opacity: 10,
             // The layer will only be visible at zoom level 15 or higher
             // You can use this function to control visibility based on zoom
             // prerender: function (evt) {
@@ -147,7 +154,7 @@ export class OpenLayersMap {
         // Initialize the map
         this.map = new Map({
             target: containerId,
-            maxTilesLoading: 60,
+            maxTilesLoading: 70,
             layers: [
                 // Base CartoDB layer (equivalent to the Leaflet implementation)
                 new TileLayer({
@@ -165,7 +172,7 @@ export class OpenLayersMap {
             ],
             view: new View({
                 center: fromLonLat([-0.8891, 41.6488]), // Note: OpenLayers uses [lon, lat] order
-                zoom: 8
+                zoom: 10
             })
         });
     }
