@@ -1,11 +1,12 @@
 import 'ol/ol.css';
+
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import { fromLonLat } from 'ol/proj';
 import XYZ from 'ol/source/XYZ';
 import TileWMS from 'ol/source/TileWMS';
-import { Circle, Point as OLPoint } from 'ol/geom';
+import { Point as OLPoint, Point } from 'ol/geom';
 import { Feature } from 'ol';
 import { Vector as VectorLayer } from 'ol/layer';
 import { Vector as VectorSource } from 'ol/source';
@@ -17,9 +18,13 @@ import { createXYZ } from 'ol/tilegrid';
 import Style from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
+import Icon from 'ol/style/Icon';
+import Layer from 'ol/renderer/webgl/Layer';
+import { ZoomSlider } from 'ol/control';
 
 
-interface Point {
+
+interface IPoint {
     lat: number;
     lng: number;
     name: string;
@@ -28,7 +33,7 @@ interface Point {
 
 export class OpenLayersMap {
     private map: Map;
-    private randomPoints: Point[] = [];
+    private randomPoints: IPoint[] = [];
 
     constructor(containerId: string) {
         // Generate random points (same as original)
@@ -47,6 +52,34 @@ export class OpenLayersMap {
                 c: "R",
             });
         }
+
+        const atlas = new Feature({
+            geometry: new Point(fromLonLat([-0.87734, 41.65606])),
+        });
+
+        atlas.setStyle(
+            new Style({
+                image: new Icon({
+                    color: '#BADA55',
+                    crossOrigin: 'anonymous',
+                    src: 'data/square.svg',
+                }),
+            }),
+        );
+
+        const atlasVectorSource = new VectorSource({
+            features: [atlas],
+        });
+
+        const atlasVectorLayer = new VectorLayer({
+            source: atlasVectorSource,
+            style: {
+                'circle-radius': 9,
+                'circle-fill-color': 'red',
+            },
+        });
+
+
 
         // Create vector source and features for random points
         const vectorSource = new VectorSource({
@@ -156,7 +189,7 @@ export class OpenLayersMap {
             target: containerId,
             maxTilesLoading: 70,
             layers: [
-                // Base CartoDB layer (equivalent to the Leaflet implementation)
+                // Base CartoDB layer
                 new TileLayer({
                     source: new XYZ({
                         url: 'https://{a-d}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
@@ -168,14 +201,86 @@ export class OpenLayersMap {
                 parcelPublicLayer,
                 irrigationLayer,
                 vectorLayer,
-                vectorTileLayer
+                vectorTileLayer,
+                atlasVectorLayer
             ],
             view: new View({
                 center: fromLonLat([-0.8891, 41.6488]), // Note: OpenLayers uses [lon, lat] order
                 zoom: 10
             })
         });
+
+        const zoomslider = new ZoomSlider();
+        this.map.addControl(zoomslider);
+
+        // Add hover interaction (optional)
+        // this.map.on('pointermove', (e) => {
+        //     const feature = this.map.forEachFeatureAtPixel(e.pixel, (feature) => feature);
+        //     if (feature) {
+        //         const element = this.map.getTargetElement();
+        //         element.style.cursor = 'pointer';
+        //     } else {
+        //         const element = this.map.getTargetElement();
+        //         element.style.cursor = '';
+        //     }
+        // });
+
+        // this.map.on('pointermove', (evt) => {
+        //     const info: HTMLElement | null = document.getElementById('info');
+        //     let currentFeature: any;
+
+        //     if (!info) return;
+
+        //     if (evt.dragging) {
+        //         info.style.visibility = 'hidden';
+        //         currentFeature = undefined;
+        //         return;
+        //     }
+
+        //     const pixel = this.map.getEventPixel(evt.originalEvent);
+        //     this.displayFeatureInfo(pixel, evt.originalEvent.target);
+        // });
+
     }
+
+
+    public displayFeatureInfo(pixel: [number, number], target: EventTarget | null): void {
+        const info: HTMLElement | null = document.getElementById('info');
+        let currentFeature: any;
+
+        if (!info) return;
+
+        const feature = (target instanceof HTMLElement && target.closest('.ol-control'))
+            ? undefined
+            : this.map.forEachFeatureAtPixel(pixel, (feature) => feature);
+
+        if (feature) {
+            info.style.left = `${pixel[0]}px`;
+            info.style.top = `${pixel[1]}px`;
+
+            if (feature !== currentFeature) {
+                info.style.visibility = 'visible';
+                info.innerText = `provincia: ${feature.get('provincia') || ''}\n` +
+                    `municipio: ${feature.get('municipio') || ''}\n` +
+                    `agregado: ${feature.get('agregado') || ''}\n` +
+                    `zona: ${feature.get('zona') || ''}\n` +
+                    `poligono: ${feature.get('poligono') || ''}\n` +
+                    `parcela: ${feature.get('parcela') || ''}\n` +
+                    `recinto: ${feature.get('recinto') || ''}\n` +
+                    `superficie: ${feature.get('superficie') || ''}\n` +
+                    `pendiente_media: ${feature.get('pendiente_media') || ''}\n` +
+                    `altitud: ${feature.get('altitud') || ''}\n` +
+                    `uso_sigpac: ${feature.get('uso_sigpac') || ''}\n` +
+                    `subvencionabilidad: ${feature.get('subvencionabilidad') || ''}\n` +
+                    `coef_regadio: ${feature.get('coef_regadio') || ''}\n` +
+                    `incidencias: ${feature.get('incidencias') || ''}\n` +
+                    `region: ${feature.get('region') || ''}`;
+            }
+        } else {
+            info.style.visibility = 'hidden';
+        }
+        currentFeature = feature;
+    };
 
     // Method to add additional WMS layers
     public addWMSLayer(url: string, layers: string, options: any = {}) {
