@@ -2,6 +2,9 @@ import './style.css';
 import L, { Map } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
+import 'leaflet.vectorgrid';
+import { Feature } from 'geojson-vt';
+
 interface Point {
     lat: number;
     lng: number;
@@ -57,6 +60,27 @@ const catLayers: MapLayer[] = [
     { name: 'Ortofoto - 2022', leafletName: 'ortofoto_color_2022', varName: 'catalunyaBase2022', year: 2022 },
     { name: 'Ortofoto (MA)', leafletName: 'ortofoto_color_provisional', varName: 'catalunyaBaseProvisional', year: 2100 }
 ];
+
+
+interface VectorTileOptions {
+    vectorTileLayerStyles: {
+        [key: string]: L.PathOptions;
+    };
+    subdomains: string;
+    maxNativeZoom: number;
+    minZoom: number;
+    maxZoom: number;
+    bounds?: L.LatLngBounds;
+}
+
+// Define the type for our feature properties
+interface FeatureProperties {
+    id: string;
+    // Add other properties that your GeoJSON features might have
+}
+
+
+
 
 export class CanvasMap {
     private map: L.Map;
@@ -162,16 +186,16 @@ export class CanvasMap {
         //     },
         // ).addTo(this.map);
 
-        L.tileLayer.wms(
-            'https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx',
-            {
-                layers: 'SIGPAC',
-                crs: window.L.CRS.EPSG4326,
-                format: 'image/png',
-                maxZoom: 23,
-                transparent: true,
-            },
-        ).addTo(this.map);
+        // L.tileLayer.wms(
+        //     'https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx',
+        //     {
+        //         layers: 'SIGPAC',
+        //         crs: window.L.CRS.EPSG4326,
+        //         format: 'image/png',
+        //         maxZoom: 23,
+        //         transparent: true,
+        //     },
+        // ).addTo(this.map);
 
         // L.tileLayer.wms(
         //     'https://mapas.igme.es/gis/services/Cartografia_Tematica/IGME_Hidrogeologico_200/MapServer/WMSServer',
@@ -288,7 +312,89 @@ export class CanvasMap {
         // }).addTo(this.map);
 
 
+        const vectorTileOptions: VectorTileOptions = {
+            vectorTileLayerStyles: {
+                // Style for all features in the 'recinto' layer
+                recinto: {
+                    weight: 1,
+                    color: '#000000',
+                    opacity: 0.8,
+                    fillColor: '#7cbe7c',
+                    fillOpacity: 0.4,
+                },
+            },
+            subdomains: '',
+            maxNativeZoom: 18,
+            minZoom: 15,
+            maxZoom: 15,
+            // minNativeZoom: 15,
+            // maxNativeZoom: 15,
+        };
 
+
+        // Create the vector grid layer
+        // const vectorGrid = L.vectorGrid.protobuf(
+        //     'https://sigpac.mapa.gob.es/vectorsdg/vector/parcela@3857/{z}.{x}.{y}.geojson',
+        //     {
+        //         // ...vectorTileOptions,
+        //         // Optional: Add click handling
+        //         interactive: true,
+        //         getFeatureId: (feature: any) => feature.properties.id,
+        //         // Optional: Add tooltip
+        //         // tooltip: (properties: FeatureProperties) => `ID: ${properties.id}`,
+        //         // Optional: Add click handler
+        //         // click: (event: any) => { console.log('Feature clicked:', event.layer.properties); }
+        //     }
+        // ).addTo(this.map);
+
+        var pbfLayerUrl = "https://sigpac-hubcloud.es/mvt/recinto@3857@pbf/{z}/{x}/{y}.pbf";
+        var opciones = {
+            rendererFactory: L.canvas.tile,
+            vectorTileLayerStyles: {
+                // A plain set of L.Path options.
+                default: {
+                    fill: true,
+                    stroke: false,
+                    fillColor: '#bd2660',
+                    fillOpacity: 1,
+                    color: '#bd2660',
+                    weight: 5,
+                    opacity: 5,
+                },
+            },
+            interactive: true,
+            // getFeatureId: (x: Feature) => x.type,
+            minNativeZoom: 12,
+            maxNativeZoom: 15,
+            minZoom: 14,           // Layer will only appear at zoom level 12 or higher
+            maxZoom: 17,
+            attribution: "<a href='https://www.scne.es/'>CC BY 4.0 scne.es</a>",
+            opacity: 2,
+            updateWhenIdle: false,
+            updateWhenZooming: true,
+            zIndex: 1000,
+        };
+
+        const pbfLayer = L.vectorGrid
+            .protobuf(pbfLayerUrl, opciones)
+            .addTo(this.map);
+
+        pbfLayer.on('mouseover', function (e) { console.log('->', e.layer.properties); });
+        pbfLayer.on('layeradd', function (e) { console.log('Layer added:', e.layer); });
+
+        // var geoJsonLayerUrl = "https://sigpac-hubcloud.es/mvt/recinto@3857@geojson/{z}/{x}/{y}.geojson";
+        // var op = {
+        //     minNativeZoom: 15,
+        //     maxNativeZoom: 15,
+        //     minZoom: 12,           // Layer will only appear at zoom level 12 or higher
+        //     // fetchOptions: {
+        //     //     credentials: 'same-origin', // Send cookies for the current domain
+        //     //     headers: {
+        //     //         'Accept-Encoding': 'identity' // Inform the server not to use gzip
+        //     //     }
+        //     // },
+        // };
+        // L.vectorGrid.protobuf(geoJsonLayerUrl, op).addTo(this.map);
 
 
 
@@ -539,7 +645,7 @@ class CustomGridLayer extends L.GridLayer {
 // }
 
 
-const defaultLayer = '../../movallibs/js/moval_gis_viewer_layer_control/imgs/default.svg';
+// const defaultLayer = '../../movallibs/js/moval_gis_viewer_layer_control/imgs/default.svg';
 // https://gis.cayc.es/movallibs/js/moval_gis_viewer_layer_infotable/moval_gis_viewer_layer_infotable.js
 // https://gis.cayc.es/movallibs/js/moval_gis_viewer_layer_infotable/locales/{{lng}}.json
 //windo.namespacesUrls.set('infotable', '../../movallibs/js/moval_gis_viewer_layer_infotable/locales/{{lng}}.json');

@@ -1,13 +1,25 @@
 import './style.css';
 import 'leaflet/dist/leaflet.css';
 
-import { CanvasMap } from './CanvasMap';
+// import { CanvasMap } from './CanvasMap';
+import { OpenLayersMap } from './OpenLayerMap';
 // import { RandomCanvasMap } from './RandomCanvasMap.ts';
 
-const map = new CanvasMap('map');
-// map.addRandomPoints(10000);
-map.startInterval();
+// leaflet
+// const map = new CanvasMap('map');
+// map.startInterval();
 // map.startReadingGrains();
+
+// openlayer
+const map = new OpenLayersMap('map');
+// Add Risk Area WMS layer
+// map.addWMSLayer(
+//     'https://wms.mapama.gob.es/sig/Agua/ZI_LaminasQ10/wms.aspx?',
+//     'NZ.RiskZone'
+// );
+
+
+
 
 
 // document.addEventListener('DOMContentLoaded', () => {
@@ -57,12 +69,4 @@ map.startInterval();
 //   </div>
 // `;
 
-// const WebSocket = require('ws');
-// const wss = new WebSocket.Server({ port: 8080 });
-
-
-
-
-
-// aqui se llama
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!);
+// setupCounter(document.querySelector<HTMLButtonElement>('#counter')!);
