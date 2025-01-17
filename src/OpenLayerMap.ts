@@ -6,7 +6,7 @@ import TileLayer from 'ol/layer/Tile';
 import { fromLonLat } from 'ol/proj';
 import XYZ from 'ol/source/XYZ';
 import TileWMS from 'ol/source/TileWMS';
-import { Point as OLPoint, Point } from 'ol/geom';
+import { Circle, MultiPoint, Point as OLPoint, Point } from 'ol/geom';
 import { Feature } from 'ol';
 import { Vector as VectorLayer } from 'ol/layer';
 import { Vector as VectorSource } from 'ol/source';
@@ -15,13 +15,10 @@ import VectorTileLayer from 'ol/layer/VectorTile';
 import VectorTileSource from 'ol/source/VectorTile';
 import GeoJSON from 'ol/format/GeoJSON';
 import { createXYZ } from 'ol/tilegrid';
-import Style from 'ol/style/Style';
-import Stroke from 'ol/style/Stroke';
-import Fill from 'ol/style/Fill';
 import Icon from 'ol/style/Icon';
-import Layer from 'ol/renderer/webgl/Layer';
+// import Layer from 'ol/renderer/webgl/Layer';
 import { ZoomSlider } from 'ol/control';
-
+import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
 
 
 interface IPoint {
@@ -80,29 +77,55 @@ export class OpenLayersMap {
         });
 
 
+        const atlasLowBatteryStyle = new Style({
+            image: new CircleStyle({
+                radius: 4,
+                fill: new Fill({
+                    color: 'rgba(255, 0, 0, 0.6)', // Red with 80% opacity
+                }),
+                // stroke: new Stroke({ color: 'red', width: 0 }),
+            }),
+        });
+
+        const atlasGoodBatteryStyle = new Style({
+            image: new CircleStyle({
+                radius: 4,
+                fill: new Fill({
+                    color: 'rgba(0, 255, 0, 0.6)', // Red with 80% opacity
+                }),
+                // stroke: new Stroke({ color: 'red', width: 0 }),
+            }),
+        });
+
 
         // Create vector source and features for random points
         const vectorSource = new VectorSource({
             features: this.randomPoints.map(point => {
-                const feature = new Feature({
-                    geometry: new OLPoint(fromLonLat([point.lng, point.lat])),
+                return new Feature({
+                    geometry: new Point(fromLonLat([point.lng, point.lat])),
                     name: point.name,
+                    style: atlasLowBatteryStyle,
                     category: point.c,
-                    fill: new Fill({
-                        color: 'rgba(255, 0, 0, 0.2)',
-                    }),
-                    color: 'rgba(255, 0, 0, 0.2)',
                 });
-                return feature;
             })
         });
 
+        const vectorSource2 = new VectorSource({
+            features: this.randomPoints.map(point => {
+                return new Feature({
+                    geometry: new Point(fromLonLat([point.lng, point.lat])),
+                    name: point.name,
+                    style: atlasGoodBatteryStyle,
+                    category: point.c,
+                });
+            })
+        });
 
         // Create vector layer for points
         const vectorLayer = new VectorLayer({
-            source: vectorSource
+            source: vectorSource,
+            style: atlasLowBatteryStyle // Apply the style at the layer level
         });
-
 
         // Create CAYC WMS layers
         const parcelPerimeterLayer = new TileLayer({
@@ -114,9 +137,9 @@ export class OpenLayersMap {
                     'TRANSPARENT': true,
                     'VERSION': '1.1.1'
                 },
-                // projection: getProjection('EPSG:4326')
                 projection: 'EPSG:4326'
-            })
+            }),
+            minZoom: 12,  // Set minimum zoom for source
         });
 
         const parcelPublicLayer = new TileLayer({
@@ -128,9 +151,9 @@ export class OpenLayersMap {
                     'TRANSPARENT': true,
                     'VERSION': '1.1.1'
                 },
-                // projection: getProjection('EPSG:4326')
                 projection: 'EPSG:4326'
-            })
+            }),
+            minZoom: 12,  // Set minimum zoom for source
         });
 
         const irrigationLayer = new TileLayer({
@@ -142,9 +165,9 @@ export class OpenLayersMap {
                     'TRANSPARENT': true,
                     'VERSION': '1.3.0'
                 },
-                // projection: getProjection('EPSG:4326')
                 projection: 'EPSG:4326'
-            })
+            }),
+            minZoom: 12,  // Set minimum zoom for source
         });
 
         // Create vector tile layer for SIGPAC parcels
@@ -166,7 +189,8 @@ export class OpenLayersMap {
             style: new Style({
                 stroke: new Stroke({
                     color: '#0000ff',
-                    width: 1
+                    width: 0.6,
+                    lineDash: [4],
                 }),
                 fill: new Fill({
                     color: 'rgba(0, 0, 255, 0.05)',
@@ -183,24 +207,26 @@ export class OpenLayersMap {
             // }
         });
 
+        // Base CartoDB layer
+        const baseLayer = new TileLayer({
+            source: new XYZ({
+                url: 'https://{a-d}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
+            })
+        });
 
         // Initialize the map
         this.map = new Map({
             target: containerId,
-            maxTilesLoading: 70,
+            maxTilesLoading: 400,
             layers: [
-                // Base CartoDB layer
-                new TileLayer({
-                    source: new XYZ({
-                        url: 'https://{a-d}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
-                    })
-                }),
-
+                baseLayer,
                 // Add CAYC layers
                 parcelPerimeterLayer,
                 parcelPublicLayer,
                 irrigationLayer,
+
                 vectorLayer,
+
                 vectorTileLayer,
                 atlasVectorLayer
             ],
@@ -212,6 +238,25 @@ export class OpenLayersMap {
 
         const zoomslider = new ZoomSlider();
         this.map.addControl(zoomslider);
+
+
+
+        // Assume 'map' is your OpenLayers map instance
+        const extent = this.map.getView().calculateExtent(map.getSize()); // Get the extent in map's projection
+
+        // Transform the extent to EPSG:4326 (if needed)
+        const transformedExtent = ol.proj.transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
+
+        // Extract coordinates of the corners
+        const bottomLeft = [transformedExtent[0], transformedExtent[1]];
+        const bottomRight = [transformedExtent[2], transformedExtent[1]];
+        const topLeft = [transformedExtent[0], transformedExtent[3]];
+        const topRight = [transformedExtent[2], transformedExtent[3]];
+
+        console.log('Bottom Left:', bottomLeft);
+        console.log('Bottom Right:', bottomRight);
+        console.log('Top Left:', topLeft);
+        console.log('Top Right:', topRight);
 
         // Add hover interaction (optional)
         // this.map.on('pointermove', (e) => {
@@ -281,6 +326,18 @@ export class OpenLayersMap {
         }
         currentFeature = feature;
     };
+
+    public generateRandomPoints(latMin: number, latMax: number, lngMin: number, lngMax: number) {
+        const getRandomInRange = (min: number, max: number) => min + Math.random() * (max - min);
+        for (let i = 0; i < 200; i++) {
+            this.randomPoints.push({
+                lat: getRandomInRange(latMin, latMax),
+                lng: getRandomInRange(lngMin, lngMax),
+                name: `Point ${i}`,
+                c: "R",
+            });
+        }
+    }
 
     // Method to add additional WMS layers
     public addWMSLayer(url: string, layers: string, options: any = {}) {
