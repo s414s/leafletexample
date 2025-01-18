@@ -3,7 +3,7 @@ import 'ol/ol.css';
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
-import { fromLonLat } from 'ol/proj';
+import { fromLonLat, transformExtent } from 'ol/proj';
 import XYZ from 'ol/source/XYZ';
 import TileWMS from 'ol/source/TileWMS';
 import { Circle, MultiPoint, Point as OLPoint, Point } from 'ol/geom';
@@ -19,6 +19,8 @@ import Icon from 'ol/style/Icon';
 // import Layer from 'ol/renderer/webgl/Layer';
 import { ZoomSlider } from 'ol/control';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
+import { ScaleLine, defaults as defaultControls } from 'ol/control.js';
+
 
 
 interface IPoint {
@@ -140,6 +142,7 @@ export class OpenLayersMap {
                 projection: 'EPSG:4326'
             }),
             minZoom: 12,  // Set minimum zoom for source
+            // extent: [0.122788, 41.4216, 0.619919, 42.087], // Include the bounding box
         });
 
         const parcelPublicLayer = new TileLayer({
@@ -154,6 +157,7 @@ export class OpenLayersMap {
                 projection: 'EPSG:4326'
             }),
             minZoom: 12,  // Set minimum zoom for source
+            // extent: [0.122788, 41.4216, 0.619919, 42.087], // Include the bounding box
         });
 
         const irrigationLayer = new TileLayer({
@@ -165,10 +169,34 @@ export class OpenLayersMap {
                     'TRANSPARENT': true,
                     'VERSION': '1.3.0'
                 },
-                projection: 'EPSG:4326'
+                projection: 'EPSG:4326',
+                // tileGrid: createXYZ({
+                //     maxZoom: 15,
+                //     minZoom: 15,  // Set minimum zoom
+                // }),
             }),
             minZoom: 12,  // Set minimum zoom for source
+            // extent: [0.122788, 41.4216, 0.619919, 42.087], // Include the bounding box
         });
+
+
+        const necesidadesDeRiegoLayer = new TileLayer({
+            source: new TileWMS({
+                url: 'https://wmts.mapama.gob.es/sig/desarrollorural/necesidades_riego/ows?',
+                params: {
+                    'SERVICE': 'WMS',
+                    'VERSION': '1.3.0',
+                    'REQUEST': 'GetMap',
+                    'LAYERS': 'necesidades_riego',
+                    'STYLES': 'DesarrolloRural_re_riego',
+                    'FORMAT': 'image/png',
+                    'CRS': 'EPSG:4326',
+                },
+                serverType: 'geoserver',
+                crossOrigin: 'anonymous',
+            }),
+        });
+
 
         // Create vector tile layer for SIGPAC parcels
         const vectorTileLayer = new VectorTileLayer({
@@ -216,6 +244,7 @@ export class OpenLayersMap {
 
         // Initialize the map
         this.map = new Map({
+            controls: defaultControls().extend([new ScaleLine()]),
             target: containerId,
             maxTilesLoading: 400,
             layers: [
@@ -224,6 +253,8 @@ export class OpenLayersMap {
                 parcelPerimeterLayer,
                 parcelPublicLayer,
                 irrigationLayer,
+
+                necesidadesDeRiegoLayer,
 
                 vectorLayer,
 
@@ -238,25 +269,6 @@ export class OpenLayersMap {
 
         const zoomslider = new ZoomSlider();
         this.map.addControl(zoomslider);
-
-
-
-        // Assume 'map' is your OpenLayers map instance
-        const extent = this.map.getView().calculateExtent(map.getSize()); // Get the extent in map's projection
-
-        // Transform the extent to EPSG:4326 (if needed)
-        const transformedExtent = ol.proj.transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
-
-        // Extract coordinates of the corners
-        const bottomLeft = [transformedExtent[0], transformedExtent[1]];
-        const bottomRight = [transformedExtent[2], transformedExtent[1]];
-        const topLeft = [transformedExtent[0], transformedExtent[3]];
-        const topRight = [transformedExtent[2], transformedExtent[3]];
-
-        console.log('Bottom Left:', bottomLeft);
-        console.log('Bottom Right:', bottomRight);
-        console.log('Top Left:', topLeft);
-        console.log('Top Right:', topRight);
 
         // Add hover interaction (optional)
         // this.map.on('pointermove', (e) => {
