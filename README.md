@@ -1,5 +1,18 @@
 # leafletexample
 sentinel-hub
+https://openlayers.org/en/latest/examples/getfeatureinfo-tile.html
+
+
+
+https://www.idee.es/segun-tipo-de-servicio
+
+
+NECESIDADES DE RIEGO LEGEND
+https://wmts.mapama.gob.es/sig/desarrollorural/necesidades_riego/ows?service=WMS&version=1.3.0&request=GetLegendGraphic&format=image%2Fpng&width=147&height=279&layer=necesidades_riego
+
+IMPLEMENTAR
+https://www.mapa.gob.es/es/cartografia-y-sig/ide/directorio_datos_servicios/agricultura/wms-inspire-agricultura.aspx
+
 
 https://www.mapama.gob.es/ide/metadatos/srv/api/records/ef87ca13-e8a4-47e4-bfa0-386c76243e19?language=all
 

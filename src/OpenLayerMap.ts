@@ -134,7 +134,7 @@ export class OpenLayersMap {
             source: new TileWMS({
                 url: 'https://gis.cayc.es/wms/cayc_general',
                 params: {
-                    'LAYERS': 'parcel_public_perimeter',
+                    'LAYERS': 'parcel_public_perimeter,parcel_public',
                     'FORMAT': 'image/png',
                     'TRANSPARENT': true,
                     'VERSION': '1.1.1'
@@ -145,20 +145,19 @@ export class OpenLayersMap {
             // extent: [0.122788, 41.4216, 0.619919, 42.087], // Include the bounding box
         });
 
-        const parcelPublicLayer = new TileLayer({
-            source: new TileWMS({
-                url: 'https://gis.cayc.es/wms/cayc_general',
-                params: {
-                    'LAYERS': 'parcel_public',
-                    'FORMAT': 'image/png',
-                    'TRANSPARENT': true,
-                    'VERSION': '1.1.1'
-                },
-                projection: 'EPSG:4326'
-            }),
-            minZoom: 12,  // Set minimum zoom for source
-            // extent: [0.122788, 41.4216, 0.619919, 42.087], // Include the bounding box
-        });
+        // const parcelPublicLayer = new TileLayer({
+        //     source: new TileWMS({
+        //         url: 'https://gis.cayc.es/wms/cayc_general',
+        //         params: {
+        //             'LAYERS': 'parcel_public',
+        //             'FORMAT': 'image/png',
+        //             'TRANSPARENT': true,
+        //             'VERSION': '1.1.1'
+        //         },
+        //         projection: 'EPSG:4326'
+        //     }),
+        //     minZoom: 12,
+        // });
 
         const irrigationLayer = new TileLayer({
             source: new TileWMS({
@@ -176,8 +175,10 @@ export class OpenLayersMap {
                 // }),
             }),
             minZoom: 12,  // Set minimum zoom for source
-            // extent: [0.122788, 41.4216, 0.619919, 42.087], // Include the bounding box
         });
+
+
+
 
 
         const necesidadesDeRiegoLayer = new TileLayer({
@@ -196,6 +197,17 @@ export class OpenLayersMap {
                 crossOrigin: 'anonymous',
             }),
         });
+
+        // Example: Add a vector layer to load GeoJSON
+        // Initialize Vector Layer for GeoJSON Results
+        const necesicadesDeRiegoGeojsonVectorLayer = new VectorLayer({
+            source: new VectorSource({
+                format: new GeoJSON(),
+            }),
+        });
+
+        // Add to the map
+        // map.addLayer(vectorLayer);
 
 
         // Create vector tile layer for SIGPAC parcels
@@ -246,15 +258,16 @@ export class OpenLayersMap {
         this.map = new Map({
             controls: defaultControls().extend([new ScaleLine()]),
             target: containerId,
-            maxTilesLoading: 400,
+            maxTilesLoading: 20,
             layers: [
                 baseLayer,
                 // Add CAYC layers
                 parcelPerimeterLayer,
-                parcelPublicLayer,
-                irrigationLayer,
+                // parcelPublicLayer,
+                // irrigationLayer,
 
-                necesidadesDeRiegoLayer,
+                // necesidadesDeRiegoLayer,
+                // necesicadesDeRiegoGeojsonVectorLayer,
 
                 vectorLayer,
 
@@ -269,6 +282,44 @@ export class OpenLayersMap {
 
         const zoomslider = new ZoomSlider();
         this.map.addControl(zoomslider);
+
+
+
+
+
+        // ADD EVENTS
+        // Handle Click Event to Request GetFeatureInfo
+        this.map.on('singleclick', async (event) => {
+            const viewResolution = this.map.getView().getResolution() ?? 1;
+            const wmsSource = necesidadesDeRiegoLayer.getSource();
+
+            const url = wmsSource?.getFeatureInfoUrl(
+                event.coordinate, // Coordinate of the click
+                viewResolution,
+                'EPSG:4326', // Projection
+                {
+                    'INFO_FORMAT': 'application/json', // Request GeoJSON
+                    // 'INFO_FORMAT': 'application/json;type=geojson', // Request GeoJSON
+                }
+            );
+
+            // https://wmts.mapama.gob.es/sig/desarrollorural/necesidades_riego/ows?REQUEST=GetFeatureInfo&QUERY_LAYERS=necesidades_riego&SERVICE=WMS&VERSION=1.3.0&STYLES=DesarrolloRural_re_riego&TRANSPARENT=true&LAYERS=necesidades_riego&CRS=EPSG%3A4326&INFO_FORMAT=application%2Fjson&I=100&J=244&WIDTH=256&HEIGHT=256&BBOX=5099490%2C-84060%2C5099850%2C-83700
+
+            if (url) {
+                try {
+                    const response = await fetch(url);
+                    const geojson = await response.json();
+                    console.log(geojson);
+                    // Update the vector source with the new data
+                    necesicadesDeRiegoGeojsonVectorLayer.getSource()?.clear();
+                    necesicadesDeRiegoGeojsonVectorLayer.getSource()?.addFeatures(new GeoJSON().readFeatures(geojson));
+                } catch (error) {
+                    console.error('Error fetching GeoJSON:', error);
+                }
+            }
+        });
+
+
 
         // Add hover interaction (optional)
         // this.map.on('pointermove', (e) => {
