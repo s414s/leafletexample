@@ -266,7 +266,7 @@ export class OpenLayersMap {
                 // parcelPublicLayer,
                 // irrigationLayer,
 
-                // necesidadesDeRiegoLayer,
+                necesidadesDeRiegoLayer,
                 // necesicadesDeRiegoGeojsonVectorLayer,
 
                 vectorLayer,

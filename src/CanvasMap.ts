@@ -88,7 +88,6 @@ export class CanvasMap {
     // private infoPanel: L.Control;
     private interid: number = 0;
     private araLayer: MapLayer;
-    private catLayer: MapLayer;
     private randomPoints: Point[] = [];
 
     constructor(containerId: string) {
