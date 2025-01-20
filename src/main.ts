@@ -7,8 +7,8 @@ import { ViewportClient } from './viewportClient';
 // import { RandomCanvasMap } from './RandomCanvasMap.ts';
 
 // Websocket client
-const wsClient = new ViewportClient("http://localhost:5118/viewport");
-await wsClient.connect();
+// const wsClient = new ViewportClient("http://localhost:5118/viewport")
+// await wsClient.connect();
 
 // leaflet
 // const map = new CanvasMap('map');

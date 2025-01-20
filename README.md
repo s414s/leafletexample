@@ -2,7 +2,9 @@
 sentinel-hub
 https://openlayers.org/en/latest/examples/getfeatureinfo-tile.html
 
-
+ws://localhost:5118/viewport
+{"protocol":"json","version":1}
+//{"arguments":["Test message"], "invocationId": "0", "target":"SendMessage", "type":1}
 
 https://www.idee.es/segun-tipo-de-servicio
 

@@ -141,6 +141,8 @@ export class OpenLayersMap {
                 },
                 projection: 'EPSG:4326'
             }),
+            preload: Infinity,
+            cacheSize: 1000,
             minZoom: 12,  // Set minimum zoom for source
             // extent: [0.122788, 41.4216, 0.619919, 42.087], // Include the bounding box
         });
@@ -177,11 +179,10 @@ export class OpenLayersMap {
             minZoom: 12,  // Set minimum zoom for source
         });
 
-
-
-
-
+        // https://openlayers.org/en/latest/apidoc/module-ol_layer_Tile-TileLayer.html
         const necesidadesDeRiegoLayer = new TileLayer({
+            // preload: Infinity,
+            cacheSize: 1000,
             source: new TileWMS({
                 url: 'https://wmts.mapama.gob.es/sig/desarrollorural/necesidades_riego/ows?',
                 params: {
@@ -224,6 +225,7 @@ export class OpenLayersMap {
                     minZoom: 15,  // Set minimum zoom
                 })
             }),
+            preload: Infinity, // TODO - check this
             minZoom: 15,  // Set minimum zoom for source
             // Style can be added here if needed
             style: new Style({
@@ -266,7 +268,7 @@ export class OpenLayersMap {
                 // parcelPublicLayer,
                 // irrigationLayer,
 
-                necesidadesDeRiegoLayer,
+                // necesidadesDeRiegoLayer,
                 // necesicadesDeRiegoGeojsonVectorLayer,
 
                 vectorLayer,
