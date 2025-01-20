@@ -1,4 +1,5 @@
 import 'ol/ol.css';
+import './info.css';
 
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -6,7 +7,7 @@ import TileLayer from 'ol/layer/Tile';
 import { fromLonLat, transformExtent } from 'ol/proj';
 import XYZ from 'ol/source/XYZ';
 import TileWMS from 'ol/source/TileWMS';
-import { Circle, MultiPoint, Point as OLPoint, Point } from 'ol/geom';
+import { Circle, Geometry, MultiPoint, Point as OLPoint, Point } from 'ol/geom';
 import { Feature } from 'ol';
 import { Vector as VectorLayer } from 'ol/layer';
 import { Vector as VectorSource } from 'ol/source';
@@ -20,6 +21,8 @@ import Icon from 'ol/style/Icon';
 import { ZoomSlider } from 'ol/control';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
 import { ScaleLine, defaults as defaultControls } from 'ol/control.js';
+import { Pixel } from 'ol/pixel';
+import { FeatureLike } from 'ol/Feature';
 
 
 
@@ -33,8 +36,14 @@ interface IPoint {
 export class OpenLayersMap {
     private map: Map;
     private randomPoints: IPoint[] = [];
+    //private currentFeature: FeatureLike | null;
+    private currentFeature: Feature<Geometry> | undefined;
+    private info: HTMLElement;
 
     constructor(containerId: string) {
+        this.info = document.getElementById('info')!;
+        this.currentFeature = undefined;
+
         // Generate random points (same as original)
         const latMin = 41.7;
         const latMax = 41.89;
@@ -287,9 +296,64 @@ export class OpenLayersMap {
 
 
 
+        const displayFeatureInfo = (pixel: Pixel, target: EventTarget | null): void => {
+            const feature = target instanceof Element && target.closest('.ol-control')
+                ? undefined
+                : this.map.forEachFeatureAtPixel(pixel, (feature) => feature as Feature);
+
+            if (feature) {
+                this.info.style.left = `${pixel[0]}px`;
+                this.info.style.top = `${pixel[1]}px`;
+
+                if (feature !== this.currentFeature) {
+                    const properties = feature.getProperties();
+                    this.info.style.visibility = 'visible';
+                    this.info.innerText = [
+                        `provincia: ${properties.provincia || ''}`,
+                        `municipio: ${properties.municipio || ''}`,
+                        `agregado: ${properties.agregado || ''}`,
+                        `zona: ${properties.zona || ''}`,
+                        `poligono: ${properties.poligono || ''}`,
+                        `parcela: ${properties.parcela || ''}`,
+                        `recinto: ${properties.recinto || ''}`,
+                        `superficie: ${properties.superficie || ''}`,
+                        `pendiente_media: ${properties.pendiente_media || ''}`,
+                        `altitud: ${properties.altitud || ''}`,
+                        `uso_sigpac: ${properties.uso_sigpac || ''}`,
+                        `subvencionabilidad: ${properties.subvencionabilidad || ''}`,
+                        `coef_regadio: ${properties.coef_regadio || ''}`,
+                        `incidencias: ${properties.incidencias || ''}`,
+                        `region: ${properties.region || ''}`
+                    ].join('\n');
+                }
+            } else {
+                this.info.style.visibility = 'hidden';
+            }
+
+            this.currentFeature = feature;
+        };
 
 
-        // ADD EVENTS
+
+        this.map.on('pointermove', (evt) => {
+            if (evt.dragging) {
+                this.info.style.visibility = 'hidden';
+                this.currentFeature = undefined;
+                return;
+            }
+
+            const pixel = this.map.getEventPixel(evt.originalEvent);
+            displayFeatureInfo(pixel, evt.originalEvent.target);
+        });
+
+        this.map.getTargetElement().addEventListener('pointerleave', () => {
+            this.currentFeature = undefined;
+            this.info.style.visibility = 'hidden';
+        });
+
+
+
+        // ADD MORE EVENTS
         // Handle Click Event to Request GetFeatureInfo
         this.map.on('singleclick', async (event) => {
             const viewResolution = this.map.getView().getResolution() ?? 1;

@@ -141,3 +141,25 @@ SRS=EPSG:4326: Coordinate system.
 WIDTH=256, HEIGHT=256: Size of the image.
 I=128, J=128: Pixel coordinates to query (center of the 256x256 image).
 INFO_FORMAT=application/json: Specifies GeoJSON output format.
+
+
+
+
+
+-- DockerFile
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+WORKDIR /App
+
+# Copy everything
+COPY . ./
+# Restore as distinct layers
+RUN dotnet restore
+# Build and publish a release
+RUN dotnet publish -c Release -o out
+
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /App
+COPY --from=build-env /App/out .
+ENTRYPOINT ["dotnet", "WebApi.dll"]
