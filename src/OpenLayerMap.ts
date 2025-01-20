@@ -4,7 +4,7 @@ import './info.css';
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
-import { fromLonLat, transformExtent } from 'ol/proj';
+import { fromLonLat, transform, transformExtent } from 'ol/proj';
 import XYZ from 'ol/source/XYZ';
 import TileWMS from 'ol/source/TileWMS';
 import { Circle, Geometry, MultiPoint, Point as OLPoint, Point } from 'ol/geom';
@@ -23,6 +23,7 @@ import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
 import { ScaleLine, defaults as defaultControls } from 'ol/control.js';
 import { Pixel } from 'ol/pixel';
 import { FeatureLike } from 'ol/Feature';
+import { Coordinate } from 'ol/coordinate';
 
 
 
@@ -39,10 +40,34 @@ export class OpenLayersMap {
     //private currentFeature: FeatureLike | null;
     private currentFeature: Feature<Geometry> | undefined;
     private info: HTMLElement;
+    private defaultStyle: Style;
+    private highlightStyle: Style;
 
     constructor(containerId: string) {
         this.info = document.getElementById('info')!;
         this.currentFeature = undefined;
+
+        this.highlightStyle = new Style({
+            stroke: new Stroke({
+                color: '#f00',  // Red outline
+                width: 2
+            }),
+            fill: new Fill({
+                color: 'rgba(255,0,0,0.2)'  // Semi-transparent red fill
+            })
+        });
+
+        // Define default style (match your original style)
+        this.defaultStyle = new Style({
+            stroke: new Stroke({
+                color: '#0000ff',
+                width: 0.6,
+                lineDash: [4],
+            }),
+            fill: new Fill({
+                color: 'rgba(0, 0, 255, 0.05)',
+            })
+        });
 
         // Generate random points (same as original)
         const latMin = 41.7;
@@ -297,9 +322,47 @@ export class OpenLayersMap {
 
 
         const displayFeatureInfo = (pixel: Pixel, target: EventTarget | null): void => {
+            const pixelCoordinates = this.map.getCoordinateFromPixel(pixel);
+            // Convert to longitude/latitude (if you're using EPSG:3857 projection)
+            const lonLat = transform(pixelCoordinates, 'EPSG:3857', 'EPSG:4326');
+
+            // Store the previous feature to reset its style
+            const previousFeature = this.currentFeature;
+
             const feature = target instanceof Element && target.closest('.ol-control')
                 ? undefined
-                : this.map.forEachFeatureAtPixel(pixel, (feature) => feature as Feature);
+                : this.map.forEachFeatureAtPixel(pixel, (feature) => feature as Feature<Geometry>);
+
+
+            // new
+            // Define highlight style
+            // const highlightStyle = new Style({
+            //     stroke: new Stroke({
+            //         color: '#f00',  // Red outline
+            //         width: 2
+            //     }),
+            //     fill: new Fill({
+            //         color: 'rgba(255,0,0,0.2)'  // Semi-transparent red fill
+            //     })
+            // });
+
+            // Define default style (match your original style)
+            // const defaultStyle = new Style({
+            //     stroke: new Stroke({
+            //         color: '#0000ff',
+            //         width: 0.6,
+            //         lineDash: [4],
+            //     }),
+            //     fill: new Fill({
+            //         color: 'rgba(0, 0, 255, 0.05)',
+            //     })
+            // });
+            //
+
+            // Reset previous feature's style if it exists
+            if (previousFeature && previousFeature !== feature) {
+                previousFeature.setStyle(this.defaultStyle);
+            }
 
             if (feature) {
                 this.info.style.left = `${pixel[0]}px`;
@@ -309,6 +372,9 @@ export class OpenLayersMap {
                     const properties = feature.getProperties();
                     this.info.style.visibility = 'visible';
                     this.info.innerText = [
+                        `coordenadas:`,
+                        `Lon -> ${lonLat[0] || ''}`,
+                        `Lat -> ${lonLat[1] || ''}`,
                         `provincia: ${properties.provincia || ''}`,
                         `municipio: ${properties.municipio || ''}`,
                         `agregado: ${properties.agregado || ''}`,
@@ -323,7 +389,7 @@ export class OpenLayersMap {
                         `subvencionabilidad: ${properties.subvencionabilidad || ''}`,
                         `coef_regadio: ${properties.coef_regadio || ''}`,
                         `incidencias: ${properties.incidencias || ''}`,
-                        `region: ${properties.region || ''}`
+                        `region: ${properties.region || ''}`,
                     ].join('\n');
                 }
             } else {
@@ -346,7 +412,11 @@ export class OpenLayersMap {
             displayFeatureInfo(pixel, evt.originalEvent.target);
         });
 
+        // Make sure to reset the style when leaving the map
         this.map.getTargetElement().addEventListener('pointerleave', () => {
+            if (this.currentFeature) {
+                this.currentFeature.setStyle(this.defaultStyle);
+            }
             this.currentFeature = undefined;
             this.info.style.visibility = 'hidden';
         });
