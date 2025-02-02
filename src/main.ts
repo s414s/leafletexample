@@ -4,11 +4,20 @@ import 'leaflet/dist/leaflet.css';
 // import { CanvasMap } from './CanvasMap';
 import { OpenLayersMap } from './OpenLayerMap';
 import { ViewportClient } from './viewportClient';
+import { CanvasMap } from './CanvasMap';
+import { CanvasMapWS } from './CanvasMapWS';
 // import { RandomCanvasMap } from './RandomCanvasMap.ts';
 
 // Websocket client
-// const wsClient = new ViewportClient("http://localhost:5118/viewport")
+// const wsClient = new ViewportClient("http://localhost:5118/viewport");
 // await wsClient.connect();
+
+// leaflet WS
+const map = new CanvasMapWS('map', "http://localhost:5118/viewport");
+// map.startInterval();
+// map.startReadingGrains();
+map.connect();
+map.startRefresh();
 
 // leaflet
 // const map = new CanvasMap('map');
@@ -16,16 +25,13 @@ import { ViewportClient } from './viewportClient';
 // map.startReadingGrains();
 
 // openlayer
-const map = new OpenLayersMap('map');
+// const map = new OpenLayersMap('map');
+
 // Add Risk Area WMS layer
 // map.addWMSLayer(
 //     'https://wms.mapama.gob.es/sig/Agua/ZI_LaminasQ10/wms.aspx?',
 //     'NZ.RiskZone'
 // );
-
-
-
-
 
 // document.addEventListener('DOMContentLoaded', () => {
 // const map = new CanvasMap('map');

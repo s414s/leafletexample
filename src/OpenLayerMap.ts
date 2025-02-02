@@ -25,8 +25,6 @@ import { Pixel } from 'ol/pixel';
 import { FeatureLike } from 'ol/Feature';
 import { Coordinate } from 'ol/coordinate';
 
-
-
 interface IPoint {
     lat: number;
     lng: number;
@@ -254,6 +252,7 @@ export class OpenLayersMap {
                     featureProjection: 'EPSG:3857'
                 }),
                 url: 'https://sigpac-hubcloud.es/mvt/recinto@3857@geojson/{z}/{x}/{y}.geojson',
+                // url: 'https://sigpac-hubcloud.es/mvt/cultivo_declarado@3857@geojson/{z}/{x}/{y}.geojson',
                 tileGrid: createXYZ({
                     maxZoom: 15,
                     minZoom: 15,  // Set minimum zoom
@@ -302,7 +301,7 @@ export class OpenLayersMap {
                 // parcelPublicLayer,
                 // irrigationLayer,
 
-                // necesidadesDeRiegoLayer,
+                necesidadesDeRiegoLayer,
                 // necesicadesDeRiegoGeojsonVectorLayer,
 
                 vectorLayer,
@@ -390,6 +389,8 @@ export class OpenLayersMap {
                         `coef_regadio: ${properties.coef_regadio || ''}`,
                         `incidencias: ${properties.incidencias || ''}`,
                         `region: ${properties.region || ''}`,
+                        `parcela: ${properties.parcela || ''}`,
+                        `parc_sistexp: ${properties.parc_sistexp || ''}`,
                     ].join('\n');
                 }
             } else {
