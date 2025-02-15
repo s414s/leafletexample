@@ -24,6 +24,7 @@ import { ScaleLine, defaults as defaultControls } from 'ol/control.js';
 import { Pixel } from 'ol/pixel';
 import { FeatureLike } from 'ol/Feature';
 import { Coordinate } from 'ol/coordinate';
+import Popup from 'ol-popup';
 
 interface IPoint {
     lat: number;
@@ -135,12 +136,18 @@ export class OpenLayersMap {
         // Create vector source and features for random points
         const vectorSource = new VectorSource({
             features: this.randomPoints.map(point => {
-                return new Feature({
+                const feature = new Feature({
                     geometry: new Point(fromLonLat([point.lng, point.lat])),
                     name: point.name,
                     style: atlasLowBatteryStyle,
                     category: point.c,
+                    // id: point.name,
                 });
+
+                feature.set("myProperty", `${point.c}-${point.name}`);
+                feature.setId(point.name);
+
+                return feature;
             })
         });
 
@@ -156,7 +163,7 @@ export class OpenLayersMap {
         });
 
         // Create vector layer for points
-        const vectorLayer = new VectorLayer({
+        const atVectorLayer = new VectorLayer({
             source: vectorSource,
             style: atlasLowBatteryStyle // Apply the style at the layer level
         });
@@ -304,7 +311,7 @@ export class OpenLayersMap {
                 necesidadesDeRiegoLayer,
                 // necesicadesDeRiegoGeojsonVectorLayer,
 
-                vectorLayer,
+                atVectorLayer,
 
                 vectorTileLayer,
                 atlasVectorLayer
@@ -318,8 +325,42 @@ export class OpenLayersMap {
         const zoomslider = new ZoomSlider();
         this.map.addControl(zoomslider);
 
+        const popup = new Popup();
+        this.map.addOverlay(popup);
+
+        this.map.on("click", (event) => {
+            // let trailName, parkName;
+
+            const trailheads = this.map.getFeaturesAtPixel(event.pixel, {
+                layerFilter: (layer) => layer === atVectorLayer
+            });
+
+            console.log("TRAIL-HEADS", trailheads);
+
+            if (trailheads.length > 0) {
+                const id = trailheads[0].getId();
+                console.log("ID", id);
+
+                const myProperty = trailheads[0].get("myProperty");
+                console.log("Y", myProperty);
+
+                // const trailName = trailheads[0].get("TRL_NAME");
+                // const parkName = trailheads[0].get("PARK_NAME");
+
+                popup.show(event.coordinate, `<b>${myProperty}</b></br>${myProperty}`);
+
+            } else {
+                popup.hide();
+            }
+
+        });
 
 
+
+
+
+
+        // TEST
         const displayFeatureInfo = (pixel: Pixel, target: EventTarget | null): void => {
             const pixelCoordinates = this.map.getCoordinateFromPixel(pixel);
             // Convert to longitude/latitude (if you're using EPSG:3857 projection)
