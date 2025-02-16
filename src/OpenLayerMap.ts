@@ -156,6 +156,11 @@ export class OpenLayersMap {
                     // id: point.name,
                 });
 
+                feature.setProperties({
+                    "lng": point.lng,
+                    "lat": point.lat,
+                });
+
                 feature.set("myProperty", `${point.c}-${point.name}`);
                 feature.setId(point.name);
 
@@ -375,6 +380,9 @@ export class OpenLayersMap {
                     imeiElement.innerText = id?.toString() ?? "imei not found";
                 }
 
+                document.getElementById("lat")!.innerText = trailheads[0].get("lat");
+                document.getElementById("lng")!.innerText = trailheads[0].get("lng");
+
                 popup.show(event.coordinate, `<b>${myProperty}</b></br>${myProperty}`);
 
                 const coordinates = event.coordinate;
@@ -395,10 +403,10 @@ export class OpenLayersMap {
                 // div.classList.remove('visible');
                 // div.classList.add('hidden');
 
-                var imeiElement = document.getElementById("imei");
-                if (imeiElement) {
-                    imeiElement.innerText = "";
-                }
+                // var imeiElement = document.getElementById("imei");
+                // if (imeiElement) {
+                //     imeiElement.innerText = "";
+                // }
 
                 document.getElementById("sidemenu")!.classList.remove('visible');
                 document.getElementById("sidemenu")!.classList.add('hidden');
