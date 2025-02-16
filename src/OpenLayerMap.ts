@@ -347,8 +347,15 @@ export class OpenLayersMap {
                 // const trailName = trailheads[0].get("TRL_NAME");
                 // const parkName = trailheads[0].get("PARK_NAME");
 
-                var imeiElement = document.getElementById("imei");
+                // document.getElementById("sidemenu")!.style.display = "";
+                // document.getElementById("sidemenu")!.style.setProperty("display", "block", "important");
+                // document.getElementById("sidemenu")!.style.setProperty("display", "", "important");
 
+                const sideMenuElement = document.getElementById("sidemenu")!;
+                sideMenuElement.classList.add('visible');
+                sideMenuElement.classList.remove('hidden');
+
+                var imeiElement = document.getElementById("imei");
                 if (imeiElement) {
                     imeiElement.innerText = id?.toString() ?? "imei not found";
                 }
@@ -356,8 +363,15 @@ export class OpenLayersMap {
                 popup.show(event.coordinate, `<b>${myProperty}</b></br>${myProperty}`);
 
             } else {
-                var imeiElement = document.getElementById("imei");
+                // document.getElementById("sidemenu")!.style.display = "hide";
+                // document.getElementById("sidemenu")!.style.setProperty("display", "none", "important");
 
+                document.getElementById("sidemenu")!.classList.remove('visible');
+                document.getElementById("sidemenu")!.classList.add('hidden');
+                // div.classList.remove('visible');
+                // div.classList.add('hidden');
+
+                var imeiElement = document.getElementById("imei");
                 if (imeiElement) {
                     imeiElement.innerText = "";
                 }
