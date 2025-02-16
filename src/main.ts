@@ -1,4 +1,6 @@
+import './reset.css';
 import './style.css';
+
 import 'leaflet/dist/leaflet.css';
 
 // import { CanvasMap } from './CanvasMap';
