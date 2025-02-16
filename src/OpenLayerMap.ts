@@ -392,8 +392,6 @@ export class OpenLayersMap {
                 // document.getElementById("sidemenu")!.style.display = "hide";
                 // document.getElementById("sidemenu")!.style.setProperty("display", "none", "important");
 
-                document.getElementById("sidemenu")!.classList.remove('visible');
-                document.getElementById("sidemenu")!.classList.add('hidden');
                 // div.classList.remove('visible');
                 // div.classList.add('hidden');
 
@@ -402,15 +400,12 @@ export class OpenLayersMap {
                     imeiElement.innerText = "";
                 }
 
+                document.getElementById("sidemenu")!.classList.remove('visible');
+                document.getElementById("sidemenu")!.classList.add('hidden');
+
                 popup.hide();
             }
-
         });
-
-
-
-
-
 
         // TEST
         const displayFeatureInfo = (pixel: Pixel, target: EventTarget | null): void => {
@@ -492,8 +487,6 @@ export class OpenLayersMap {
 
             this.currentFeature = feature;
         };
-
-
 
         this.map.on('pointermove', (evt) => {
             if (evt.dragging) {
