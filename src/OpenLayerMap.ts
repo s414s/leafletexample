@@ -44,6 +44,17 @@ export class OpenLayersMap {
     private highlightStyle: Style;
 
     constructor(containerId: string) {
+
+        // ========= version con template =========
+        const sideMenuTemplate = document.getElementById("sidemenu-template")! as HTMLTemplateElement;
+        const sideMenuNode = sideMenuTemplate.content.cloneNode(true);
+
+        const mapElement = document.getElementById("map")!;
+
+        // When you append a DocumentFragment to an element, its child nodes are moved into the target element, leaving the original fragment empty.
+        mapElement.appendChild(sideMenuNode);
+        // ========= version con template =========
+
         this.info = document.getElementById('info')!;
         this.currentFeature = undefined;
 
@@ -353,6 +364,7 @@ export class OpenLayersMap {
                 // document.getElementById("sidemenu")!.style.display = "";
                 // document.getElementById("sidemenu")!.style.setProperty("display", "block", "important");
                 // document.getElementById("sidemenu")!.style.setProperty("display", "", "important");
+
 
                 const sideMenuElement = document.getElementById("sidemenu")!;
                 sideMenuElement.classList.add('visible');
