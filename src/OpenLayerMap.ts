@@ -347,9 +347,21 @@ export class OpenLayersMap {
                 // const trailName = trailheads[0].get("TRL_NAME");
                 // const parkName = trailheads[0].get("PARK_NAME");
 
+                var imeiElement = document.getElementById("imei");
+
+                if (imeiElement) {
+                    imeiElement.innerText = id?.toString() ?? "imei not found";
+                }
+
                 popup.show(event.coordinate, `<b>${myProperty}</b></br>${myProperty}`);
 
             } else {
+                var imeiElement = document.getElementById("imei");
+
+                if (imeiElement) {
+                    imeiElement.innerText = "";
+                }
+
                 popup.hide();
             }
 

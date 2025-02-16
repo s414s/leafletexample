@@ -26,7 +26,7 @@ import { OpenLayersMap } from './OpenLayerMap';
 // map.startReadingGrains();
 
 // openlayer
-const map = new OpenLayersMap('map');
+new OpenLayersMap('map');
 
 // Add Risk Area WMS layer
 // map.addWMSLayer(
