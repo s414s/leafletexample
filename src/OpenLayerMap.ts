@@ -123,15 +123,15 @@ export class OpenLayersMap {
             }),
         });
 
-        const atlasGoodBatteryStyle = new Style({
-            image: new CircleStyle({
-                radius: 4,
-                fill: new Fill({
-                    color: 'rgba(0, 255, 0, 0.6)', // Red with 80% opacity
-                }),
-                // stroke: new Stroke({ color: 'red', width: 0 }),
-            }),
-        });
+        // const atlasGoodBatteryStyle = new Style({
+        //     image: new CircleStyle({
+        //         radius: 4,
+        //         fill: new Fill({
+        //             color: 'rgba(0, 255, 0, 0.6)', // Red with 80% opacity
+        //         }),
+        //         // stroke: new Stroke({ color: 'red', width: 0 }),
+        //     }),
+        // });
 
 
         // Create vector source and features for random points
@@ -152,16 +152,16 @@ export class OpenLayersMap {
             })
         });
 
-        const vectorSource2 = new VectorSource({
-            features: this.randomPoints.map(point => {
-                return new Feature({
-                    geometry: new Point(fromLonLat([point.lng, point.lat])),
-                    name: point.name,
-                    style: atlasGoodBatteryStyle,
-                    category: point.c,
-                });
-            })
-        });
+        // const vectorSource2 = new VectorSource({
+        //     features: this.randomPoints.map(point => {
+        //         return new Feature({
+        //             geometry: new Point(fromLonLat([point.lng, point.lat])),
+        //             name: point.name,
+        //             style: atlasGoodBatteryStyle,
+        //             category: point.c,
+        //         });
+        //     })
+        // });
 
         // Create vector layer for points
         const atVectorLayer = new VectorLayer({
@@ -217,6 +217,7 @@ export class OpenLayersMap {
                 // }),
             }),
             minZoom: 12,  // Set minimum zoom for source
+            visible: false,
         });
 
         // https://openlayers.org/en/latest/apidoc/module-ol_layer_Tile-TileLayer.html
@@ -313,6 +314,7 @@ export class OpenLayersMap {
                 // necesicadesDeRiegoGeojsonVectorLayer,
 
                 atVectorLayer,
+                irrigationLayer,
 
                 vectorTileLayer,
                 atlasVectorLayer
