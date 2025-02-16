@@ -60,8 +60,10 @@ body {
   padding: 20px;
   /* transition: all 0.1s ease-in-out; */
   /* transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); */
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   /* transition: transform 0.3s cubic-bezier(0.65, 0, 0.35, 1) */
+
+  /* transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); */
+  /* transition: all 0.3s ease-out; */
 }
 
 /* https://blog.pixelfreestudio.com/how-to-use-css-transitions-for-smooth-web-animations/ */
@@ -71,6 +73,7 @@ body {
   visibility: hidden;
   transform: translateX(100%);
   /* transition: all 0.3s ease-in-out; */
+  transition: all 0.3s ease-in;
 }
 
 .visible {
@@ -78,6 +81,12 @@ body {
   visibility: visible;
   transform: translateX(0);
   /* transition: all 0.3s ease-in-out; */
+  transition: all 0.3s ease-out;
+}
+
+.ol-popup {
+  background-color: white;
+  padding: 5px;
 }
 
 h1 {

@@ -25,6 +25,7 @@ import { Pixel } from 'ol/pixel';
 import { FeatureLike } from 'ol/Feature';
 import { Coordinate } from 'ol/coordinate';
 import Popup from 'ol-popup';
+import { easeIn, easeOut } from 'ol/easing';
 
 interface IPoint {
     lat: number;
@@ -362,6 +363,17 @@ export class OpenLayersMap {
 
                 popup.show(event.coordinate, `<b>${myProperty}</b></br>${myProperty}`);
 
+                const coordinates = event.coordinate;
+                // this.map.getView().setCenter(coordinates);
+                this.map.getView().padding = [0, 300, 0, 0];
+                this.map.getView().animate({
+                    center: coordinates,
+                    zoom: 15,
+                    duration: 500,
+                    easing: easeOut,
+                });
+
+                // https://openlayers.org/en/latest/examples/overlay.html
             } else {
                 // document.getElementById("sidemenu")!.style.display = "hide";
                 // document.getElementById("sidemenu")!.style.setProperty("display", "none", "important");
@@ -623,8 +635,12 @@ export class OpenLayersMap {
     }
 
     // Method to update view
-    public setView(lon: number, lat: number, zoom: number) {
+    public setViewAndZoom(lon: number, lat: number, zoom: number) {
         this.map.getView().setCenter(fromLonLat([lon, lat]));
         this.map.getView().setZoom(zoom);
+    }
+
+    public setView(lon: number, lat: number) {
+        this.map.getView().setCenter(fromLonLat([lon, lat]));
     }
 }
